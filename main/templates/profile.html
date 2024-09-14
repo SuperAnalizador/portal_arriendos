@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-3">
+            <h3 class="text-center">Cambia tu contraseña</h3>
+            <form action="/accounts/change-pass/" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" name="password" id="password" placeholder="*****" required>
+                </div>
+                <div class="mb-3">
+                    <label for="pass_repeat" class="form-label">Repetir Contraseña</label>
+                    <input type="pass_repeat" class="form-control" name="pass_repeat" id="pass_repeat" placeholder="*****" required>
+                </div>
+                <button type="submit" class="btn btn-danger">Guardar Contraseña</button>
+            </form>
+        </div>
+        <div class="col-5">
+            <h3>Editar datos personales</h3>
+            <form action="/edit-user/" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="abc@mail.com" value="{{user.email}}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="first_name" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" name="first_name" id="first_name" placeholder="Tu nombre" value="{{user.first_name}}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="last_name" class="form-label">Apellido</label>
+                    <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Tu apellido" value="{{user.last_name}}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Direccion</label>
+                    <input type="text" class="form-control" name="direccion" id="direccion" placeholder="Tu dirección" value="{{user.usuario.direccion}}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="" class="form-label">Teléfono</label>
+                    <input type="text" class="form-control" name="telefono" id="telefono" placeholder="Tu teléfono" value="{% if user.usuario.telefono %}{{user.usuario.telefono}}{% endif %}">
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="rol"
+                            id="arrendador"
+                            value="arrendador"
+                            required
+                            {% if user.usuario.rol == 'arrendador' %}
+                                checked
+                            {% endif %}
+                        />
+                        <label class="form-check-label" for="">Arrendador</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="rol"
+                            id="arrendatario"
+                            value="arrendatario"
+                            required
+                            {% if user.usuario.rol == 'arrendatario' %}
+                                checked
+                            {% endif %}
+                        />
+                        <label class="form-check-label" for="">Arrendatario</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Guardar Datos</button>
+            </form>
+        </div>
+        <div class="col-4">
+            <h3 class="text-center">
+                {% if user.usuario.rol == 'arrendador' %}
+                    Tus propiedades
+                {% elif  user.usuario.rol == 'arrendador' %}
+                    Propiedades solicitadas
+                {% else %}
+                    TODAS
+                {% endif %}
+            </h3>
+            <ul class="list-group">
+                {% for inmueble in mis_inmuebles %}
+                    <li class="list-group-item">
+                        <h5>{{ inmueble.nombre }}</h5>
+                        <div class="d-flex justify-content-between">
+                            <span>$ {{ inmueble.precio }} por mes</span>
+                            <a href="{% url 'detail_property' id=inmueble.id %}" class="p-1 text-success">
+                                <i class="bi bi-card-text"></i>
+                            </a>
+                            <a href="{% url 'edit_property' id=inmueble.id %}" class="p-1">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a href="#" class="p-1 text-danger" onclick="eliminar(event)">
+                                <i class="bi bi-trash-fill" id="{{inmueble.id}}"></i>
+                            </a>
+                        </div>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">Sin propiedades aún</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{%block js %}
+    <script>
+        function eliminar(event) {
+            //evita que enlace redirija
+            event.preventDefault()
+            //recuperar href del enlace clickeado
+            const id = event.target.id
+            const url = '/delete_property/' + id + '/'
+            //pedir confirmación de eliminar propiedad
+            //console.log("Borrando inmueble " + id)
+            const confirmacion = confirm('¿Desea eliminar inmueble?')
+            if (confirmacion == true){
+                //redireccion a url
+                window.location.href = url
+            }
+        }
+    </script>
+{% endblock %}

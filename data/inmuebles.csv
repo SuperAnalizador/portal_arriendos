@@ -1,0 +1,5 @@
+nombre;direccion;ciudad;tipo_inmueble;estado;area;habitaciones;bagnos;estacionamientos;precio;descripcion;disponibilidad
+Casa Bonita;Calle Falsa 123;Ciudad X;Casa;Nuevo;120;3;2;1;150000;Una casa amplia con jardín;Disponible
+Departamento Central;Av. Siempre Viva 742;Ciudad Y;Departamento;Usado;80;2;1;1;100000;Departamento céntrico con acceso a servicios;Disponible
+Villa Tranquila;Calle Amapolas 456;Ciudad Z;Casa;Nuevo;200;4;3;2;250000;Casa en zona residencial tranquila;No disponible
+Oficina Moderna;Av. Empresarial 101;Ciudad X;Oficina;Nuevo;60;0;1;0;75000;Oficina moderna con acceso a internet rápido;Disponible

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- <h2>Páginal inicial</h2> -->
+    <div class="row">
+        <div class="col-3">
+            <h3 class="text-center">Filtra las propiedades</h3>
+            {% csrf_token %}
+            <form action="/" method="get">
+                <div class="mb-3">
+                    <label for="region_cod" class="form-label">Región</label>
+                    <select class="form-select" name="region_cod" id="region_cod">
+                        <option value="">Selecciona una región</option>
+                        {% for region in regiones %}
+                            <option value="{{ region.cod }}">{{ region.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="cod_comuna" class="form-label">Comuna</label>
+                    <select class="form-select" name="cod_comuna" id="cod_comuna">
+                        <option value="">Selecciona una comuna</option>
+                        {% for comuna in comunas %}
+                            <option value="{{ comuna.cod }}">{{ comuna.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="palabra" class="form-label">Palabra</label>
+                    <input type="text" class="form-control" name="palabra" id="palabra">
+                </div>
+                <input type="submit" value="Buscar" class="btn btn-success">
+            </form>
+        </div>
+        <div class="col-9">
+            <h3 class="text-center">Lista de propiedades</h3>
+            {% for inmueble in inmuebles %}
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8">
+                                <h5 class="card-title">{{ inmueble.nombre }}</h5>
+                                <p class="card-text">{{ inmueble.descripcion }}</p>
+                                <p class="card-text">{{ inmueble.comuna }}</p>
+                            </div>
+                            <div class="col-4">
+                                <a href="{% url 'detail_property' id=inmueble.id %}" class="btn btn-primary">Ver detalle</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="fs-4 mt-5 text-center text-danger">No se han encontrado propiedades para esos filtros</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block js%}
+    <script>
+        function filtrar_comunas(){
+            //se obtene valor de region seleccionada
+            const cod_seleccionado = $(this).val()
+            $('#cod_comuna').val("")
+            //iterar sobre todas las comunas y mostrar solo las corrrespondientes a la region seleccionada, se verifica por prefijo del codigo de comuna
+            $('#cod_comuna option').each(function() {
+                const comuna = $(this)
+                const cod_comuna = comuna.val()
+                if (cod_seleccionado == cod_comuna.substring(0,2)){
+                    comuna.show()
+                } else {
+                    comuna.hide()
+                }
+            })
+        }
+        $('#region_cod').on('change', filtrar_comunas)
+    </script>
+{% endblock %}
